@@ -15,6 +15,7 @@ const redPizzaPad = document.querySelector(".js-pad-red");
 const bluePizzaPad = document.querySelector(".js-pad-blue");
 const yellowPizzaPad = document.querySelector(".js-pad-yellow");
 
+
 /**
  * VARIABLES
  */
@@ -48,20 +49,21 @@ let roundCount = 0; // track the number of rounds that have been played so far
   {
     color: "green",
     selector: document.querySelector(".js-pad-green"),
-    sound: new Audio("../assets/simon-says-sound-1.mp3"),
-  },
-
-  {
-    color: "yellow",
-    selector: document.querySelector(".js-pad-yellow"),
-    sound: new Audio("../assets/simon-says-sound-1.mp3"),
+    sound: new Audio("../assets/simon-says-sound-2.mp3"),
   },
 
   {
     color: "blue",
     selector: document.querySelector(".js-pad-blue"),
-    sound: new Audio("../assets/simon-says-sound-1.mp3"),
+    sound: new Audio("../assets/simon-says-sound-3.mp3"),
   },
+
+  {
+    color: "yellow",
+    selector: document.querySelector(".js-pad-yellow"),
+    sound: new Audio("../assets/simon-says-sound-4.mp3"),
+  },
+
   // TODO: Add the objects for the green, blue, and yellow pads. Use object for the red pad above as an example.
 ];
 
@@ -94,8 +96,8 @@ startButton.addEventListener("click", startButtonHandler);
 function startButtonHandler() {
   maxRoundCount = setLevel();
   roundCount++;
-  startButton.classList.add(".hidden");
-  statusSpan.classList.remove(".hidden");
+  startButton.classList.add("hidden");
+  statusSpan.classList.remove("hidden");
   playComputerTurn();
 
   return { startButton, statusSpan };
@@ -121,7 +123,7 @@ function startButtonHandler() {
 function padHandler(event) {
   const { color } = event.target.dataset;
   if (!color) return; 
-  let pad = pads.find(color);
+  let pad = pads.find(({ _color }) => _color === color);
   pad.sound.play();
   checkPress(color);
   return color;
@@ -219,11 +221,10 @@ return element;
 // added the second part function simonSequence based on google, not sure if correct, need to declare value
 
 function activatePad(color) {
-let pad = pads.find(color); 
-pad.selector.addClass(".activated");
+let pad = pads.find(({ color }) => color === color); 
+pad.selector.classList.add("activated");
 pad.sound.play();
-setTimeout(500);
-pad.selector.removeClass(".activated");
+setTimeout(() => pad.selector.classList.remove("activated"), 500);
 }
 
 /**
@@ -274,13 +275,12 @@ sequence.forEach(function (element, index) { setTimeout(() => activatePad(elemen
 
 
 function playComputerTurn() {
-padContainer.addClass(".unclickable");
+padContainer.classList.add("unclickable"); 
 statusSpan.innerHTML = "The computer's turn...";  
-heading.innerHTML = "'Round ${roundCount} of ${maxRoundCount}'";
-let random = Math.random() * (3 - 0) + 0;
-computerSequence.push(pads[random].color);
+heading.innerHTML = "Round " + roundCount  + "of" + maxRoundCount;
+computerSequence.push(getRandomItem(pads).color);
 activatePads(computerSequence);
-setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000);
+setTimeout(() => playHumanTurn(roundCount), (roundCount * 600) + 1000);
 }
 
 
@@ -295,8 +295,8 @@ setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000);
 
 
 function playHumanTurn() {
-padContainer.classList.remove(".unclickable");
-statusSpan.innerHTML = "'There are ${roundCount} rounds left!'";
+padContainer.classList.remove("unclickable");
+statusSpan.innerHTML = /player/i;
 }
 
   // TODO: Write your code here.
@@ -391,7 +391,7 @@ function resetGame(text) {
   playerSequence = [];
   roundCount = [];
   alert(text);
-  setText(heading, "Copy Cat");
+  setText(heading, "Simon Says");
   startButton.classList.remove("hidden");
   statusSpan.classList.add("hidden");
   padContainer.classList.add("unclickable");
